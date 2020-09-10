@@ -15,5 +15,5 @@
 
 ## 세부 구현 Scenario
 - 물건 관리 / 계정 관리 / 게임 등 어떤 것을 도메인으로 구현할지는 고민
-- DB는 MongoDB 사용 예정
+- DB는 MongoDB 사용 예정(flapdoodle embed)
 - Controller는 Functional한 방식으로 구현(기존 MVC 방식말고)
