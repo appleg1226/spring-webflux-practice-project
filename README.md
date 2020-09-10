@@ -1,4 +1,4 @@
-# spring-webflux-practice-project
+# Spring Webflux Practice Project
 
 ## Spring Library(ver_2.3.5)
 - Spring Boot
