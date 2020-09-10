@@ -8,11 +8,13 @@
 - Spring Reactivce Data
 
 - Spring Security
+<br/>
 
 ## 프로젝트 구현 목적
 - 스프링 Reactive에 대한 사용법을 미리 익혀 이후 일할 때 가용한 도구로 만들기 위함
 
 - 공부를 하면서 추가적으로 알게 된 지식들을 코드로 작성하여 추후 참고할 목적으로 제작
+<br/>
 
 ## 구현 예정 Outline
 - Webflux 컨트롤러 작성 및 테스트 코드 작성
@@ -22,6 +24,7 @@
 - Spring Webclient를 이용하여 외부 api 호출하는 코드 작성
 
 - Spring Security 적용
+<br/>
 
 ## 세부 구현 가상 Scenario
 
@@ -36,6 +39,7 @@
 - DB는 MongoDB 사용 예정(flapdoodle embed)
 
 - Controller는 Functional한 방식으로 구현(기존 MVC 방식말고)
+<br/>
 
 ## 클래스 설명
 ```
