@@ -10,6 +10,19 @@
 - Spring Security
 <br/>
 
+```
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-test'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+}
+```
+
 ## 프로젝트 구현 목적
 - 스프링 Reactive에 대한 사용법을 미리 익혀 이후 일할 때 가용한 도구로 만들기 위함
 
