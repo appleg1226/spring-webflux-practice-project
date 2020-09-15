@@ -17,4 +17,8 @@ public class ItemInformation{
     public static enum Type {
         EQUIP, CONSUME, OTHER
     }
+
+    public static boolean isType(ItemInformation item, Type type){
+        return item.getType().equals(type);
+    }
 }
