@@ -56,13 +56,22 @@ dependencies {
 
 ## 클래스 설명
 ```
-domain package:
+domain package
+- class User: 유저 정보를 저장하는 클래스
+- class ItemInformation: 유저와 상점이 소유한 아이템 정보 클래스 
+- class Shop: 상점 정보를 저장하는 클래스
 
 controller package:
 
-repository package: 
+repository package: ReactiveMongoRepository를 모두 구현.
+- UserRepository
+- ItemInformationRepository
+- ShopRepository
 
-service package:
+service package
+- InventoryManager: 인벤토리 조회/저장 등의 기능 담당
+- ShopManager: 물건 조회/판매/구매 등의 기능 담당
+- AdminManager: 운영자의 관점으로 유저들에게 아이템 배포 기능 담당
 
 security package:
 ```
