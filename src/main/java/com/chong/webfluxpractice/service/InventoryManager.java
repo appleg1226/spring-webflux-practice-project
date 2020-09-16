@@ -12,5 +12,5 @@ public interface InventoryManager {
     Flux<ItemInformation> getItemListByType(Mono<User> user, ItemInformation.Type type);
     Mono<String> getItem(Mono<User> user, ItemInformation item);
     Flux<ItemInformation> checkEventItemsOwn(Mono<User> user);
-    Mono<Map<String, Integer>> getItemCountByType(Mono<User> user);
+    Mono<Map<ItemInformation.Type, Long>> getItemCountByType(Mono<User> user);
 }

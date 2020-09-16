@@ -8,6 +8,8 @@
 - Spring Reactivce Data
 
 - Spring Security
+
+- Reactor Kafka
 <br/>
 
 ```
@@ -37,21 +39,25 @@ dependencies {
 - Spring Webclient를 이용하여 외부 api 호출하는 코드 작성
 
 - Spring Security 적용
+
+- Reactor Kafka Message Sender & Receiver 코드 작성
 <br/>
 
 ## 세부 구현 가상 Scenario
 
 - 게임 아이템 획득 상황 및 상점 시스템 구현: 
 
-  - 이용자 정보: 아이템 획득, 인벤토리 현황 확인   
+  - 이용자 정보: 아이템 획득, 인벤토리 현황 확인(전체, 타입별), 이벤트 아이템 조회(외부 호출), 종류별 아이템 카운트   
   
   - 상점 시스템: 아이템 구매 및 판매  
   
   - 이벤트 시스템: 이벤트 아이템 전체/선별 지급  
   
-- DB는 MongoDB 사용 예정(flapdoodle embed)
+- DB는 MongoDB 사용(flapdoodle embed)
 
 - Controller는 Functional한 방식으로 구현(기존 MVC 방식말고)
+
+- Kafka 메시지 보내고 받는 클래스 작성. 이벤트 서버로 유저 정보 보내기.
 <br/>
 
 ## 클래스 설명
@@ -74,4 +80,6 @@ service package
 - AdminManager: 운영자의 관점으로 유저들에게 아이템 배포 기능 담당
 
 security package:
+
+kafka package:
 ```

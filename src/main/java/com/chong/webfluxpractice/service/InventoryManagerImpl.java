@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,17 +50,42 @@ public class InventoryManagerImpl implements InventoryManager {
                 result.add(item);
                 user.setInventory(result);
                 return userRepo.save(user);
-            }).map(user -> user.getUserId() + "received item: " + item.getName());
+            }).map(user -> user.getUserId() + " - received item: " + item.getName());
     }
 
     @Override
-    public Flux<ItemInformation> checkEventItemsOwn(Mono<User> user) {
-        // webClient 사용 예정
-        return null;
+    public Flux<ItemInformation> checkEventItemsOwn(Mono<User> userMono) {
+        WebClient webClient = WebClient.create();
+        Flux<ItemInformation> eventItems = webClient
+                .get()
+                .uri("http://event_server/event_items")
+                .retrieve()
+                .bodyToFlux(ItemInformation.class);
+
+        return userMono.flatMap(user -> userRepo.findById(user.getUserId()))
+                 .switchIfEmpty(Mono.empty())
+                 .flatMapIterable(User::getInventory)
+                 .flatMap(itemInformation -> eventItems.filter(itemInformation1 -> itemInformation.getName().equals(itemInformation1.getName())));
     }
 
     @Override
-    public Mono<Map<String, Integer>> getItemCountByType(Mono<User> user) {
-        return null;
+    public Mono<Map<ItemInformation.Type, Long>> getItemCountByType(Mono<User> userMono) {
+        return userMono
+                .flatMap(user -> userRepo.findById(user.getUserId()))
+                .switchIfEmpty(Mono.empty())
+                .flatMap(user -> Flux.fromIterable(user.getInventory())
+                        .groupBy(ItemInformation::getType)
+                        .concatMap(groupedFlux-> groupedFlux.count()
+                                .map(count ->{
+                                    final Map<ItemInformation.Type, Long> typeCount = new HashMap<>();
+                                    typeCount.put(groupedFlux.key(), count);
+                                    return typeCount;
+                                })).reduce((accumulatedMap, currentMap) -> {
+                            Map<ItemInformation.Type, Long> typeCount = new HashMap<>();
+                            typeCount.putAll(accumulatedMap);
+                            typeCount.putAll(currentMap);
+                            return typeCount;
+                        }));
+
     }
 }

@@ -1,3 +1,12 @@
 spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+
+logging:
+  level:
+    org:
+      springframework:
+        boot:
+          autoconfigure:
+            mongo:
+              embedded: warn

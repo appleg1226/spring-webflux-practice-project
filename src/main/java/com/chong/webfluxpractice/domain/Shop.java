@@ -13,5 +13,5 @@ import java.util.List;
 public class Shop {
     @Id
     private String id;
-    private List<ItemInformation> itemsToSell;
+    private List<ItemInformation> itemList;
 }
