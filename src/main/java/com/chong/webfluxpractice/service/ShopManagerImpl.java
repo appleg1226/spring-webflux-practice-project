@@ -2,7 +2,7 @@ package com.chong.webfluxpractice.service;
 
 import com.chong.webfluxpractice.domain.ItemInformation;
 import com.chong.webfluxpractice.domain.Shop;
-import com.chong.webfluxpractice.domain.User;
+import com.chong.webfluxpractice.repository.ItemInformationRepository;
 import com.chong.webfluxpractice.repository.ShopRepository;
 import com.chong.webfluxpractice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,60 +22,61 @@ public class ShopManagerImpl implements ShopManager {
 
     private final ShopRepository shopRepository;
     private final UserRepository userRepository;
+    private final ItemInformationRepository itemRepository;
 
     @Override
-    public Flux<ItemInformation> getItemListforSell(Mono<Shop> shopMono) {
-        return shopMono
-                .flatMap(shop -> shopRepository.findById(shop.getId()))
+    public Flux<ItemInformation> getItemListforSell(Mono<String> shopId) {
+        return shopId
+                .flatMap(shopRepository::findById)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "not exist")))
                 .map(Shop::getItemList)
                 .flatMapMany(Flux::fromIterable);
     }
 
     @Override
-    public Mono<String> buyItemfromUser(Mono<Shop> shopMono, User user, ItemInformation item) {
-        return shopMono
-                .flatMap(shop -> shopRepository.findById(shop.getId()))
+    public Mono<String> buyItemfromUser(String shopId, String userId, String itemId) {
+        return Mono.just(itemId)
+                .flatMap(itemRepository::findById)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "not exist")))
-                .flatMap(shop -> userRepository.findById(user.getUserId())
-                        .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "not exist")))
-                        .flatMap(user1 ->{
-                            List<ItemInformation> userItemList = user1.getInventory();
-                            userItemList.remove(item);
-                            user1.setInventory(userItemList);
-                            log.info(user1.toString());
-                            return userRepository.save(user1);
-                        })
-                        .flatMap(user1 -> {
-                            List<ItemInformation> shopItemList = shop.getItemList();
-                            shopItemList.add(item);
-                            shop.setItemList(shopItemList);
-                            log.info(shop.toString());
-                            return shopRepository.save(shop);
-                        })).map(shop -> user.getUserId() + " sold item - " + item.getName());
+                .flatMap(item -> userRepository.findById(userId)
+                                .flatMap(user->{
+                                    List<ItemInformation> userItemList = user.getInventory();
+                                    userItemList.remove(item);
+                                    user.setInventory(userItemList);
+                                    log.info(user.toString());
+                                    return userRepository.save(user);
+                                })
+                                .flatMap(user -> shopRepository.findById(shopId))
+                                .flatMap(shop -> {
+                                    List<ItemInformation> shopItemList = shop.getItemList();
+                                    shopItemList.add(item);
+                                    shop.setItemList(shopItemList);
+                                    log.info(shop.toString());
+                                    return shopRepository.save(shop);
+                        })).map(shop -> userId + " sold item - " + itemId);
     }
 
     @Override
-    public Mono<String> sellItemtoUser(Mono<Shop> shopMono, User user, ItemInformation item) {
-        return shopMono
-                .flatMap(shop -> shopRepository.findById(shop.getId()))
+    public Mono<String> sellItemtoUser(String shopId, String userId, String itemId) {
+        return Mono.just(itemId)
+                .flatMap(itemRepository::findById)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "not exist")))
-                .flatMap(shop -> userRepository.findById(user.getUserId())
-                        .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "not exist")))
-                        .flatMap(user1 ->{
-                            List<ItemInformation> userItemList = user1.getInventory();
+                .flatMap(item -> userRepository.findById(userId)
+                        .flatMap(user->{
+                            List<ItemInformation> userItemList = user.getInventory();
                             userItemList.add(item);
-                            user1.setInventory(userItemList);
-                            log.info(user1.toString());
-                            return userRepository.save(user1);
+                            user.setInventory(userItemList);
+                            log.info(user.toString());
+                            return userRepository.save(user);
                         })
-                        .flatMap(user1 -> {
+                        .flatMap(user -> shopRepository.findById(shopId))
+                        .flatMap(shop -> {
                             List<ItemInformation> shopItemList = shop.getItemList();
                             shopItemList.remove(item);
                             shop.setItemList(shopItemList);
                             log.info(shop.toString());
                             return shopRepository.save(shop);
-                        })).map(shop -> user.getUserId() + " purchased item - " + item.getName());
+                        })).map(shop -> userId + " purchased item - " + itemId);
 
     }
 }

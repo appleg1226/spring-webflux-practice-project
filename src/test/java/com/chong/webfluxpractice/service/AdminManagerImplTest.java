@@ -2,6 +2,7 @@ package com.chong.webfluxpractice.service;
 
 import com.chong.webfluxpractice.domain.ItemInformation;
 import com.chong.webfluxpractice.domain.User;
+import com.chong.webfluxpractice.repository.ItemInformationRepository;
 import com.chong.webfluxpractice.repository.UserRepository;
 import lombok.extern.java.Log;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ class AdminManagerImplTest {
     AdminManager adminManager;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ItemInformationRepository itemRepository;
 
     @Test
     void provideItemtoAllTest() {
@@ -35,12 +38,11 @@ class AdminManagerImplTest {
         User testUser3 = User.builder().userId("3").gold(0).serverName("asia").inventory(inventory).build();
 
         userRepository.saveAll(Arrays.asList(testUser1, testUser2, testUser3)).blockFirst();
-        adminManager.provideItemtoAll(i1).block();
+        itemRepository.save(i1).block();
 
-        userRepository.findAll().collect(Collectors.toList()).subscribe(user -> {
-            log.info(user.toString());
-        });
+        adminManager.provideItemtoAll(i1.getId()).block();
 
+        userRepository.findAll().collect(Collectors.toList()).subscribe(user -> log.info(user.toString()));
     }
 
 
@@ -54,9 +56,11 @@ class AdminManagerImplTest {
         User testUser3 = User.builder().userId("3").gold(0).serverName("europe").inventory(inventory).build();
 
         userRepository.saveAll(Arrays.asList(testUser1, testUser2, testUser3)).blockFirst();
-        adminManager.provideItemtoServer("asia", i1).block();
+        itemRepository.save(i1).block();
 
-        userRepository.findAll().collect(Collectors.toList()).subscribe(user -> {
+        adminManager.provideItemtoServer("asia", i1.getId()).block();
+
+        userRepository.findAll().subscribe(user -> {
             log.info(user.toString());
         });
     }
