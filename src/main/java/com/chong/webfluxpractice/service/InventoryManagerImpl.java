@@ -22,18 +22,18 @@ public class InventoryManagerImpl implements InventoryManager {
     private final UserRepository userRepo;
 
     @Override
-    public Flux<ItemInformation> getItemList(Mono<User> userMono) {
-        return userMono
-            .flatMap(user -> userRepo.findById(user.getUserId()))
+    public Flux<ItemInformation> getItemList(Mono<String> userId) {
+        return userId
+            .flatMap(userRepo::findById)
             .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "not exist")))
             .map(User::getInventory)
             .flatMapMany(Flux::fromIterable);
     }
 
     @Override
-    public Flux<ItemInformation> getItemListByType(Mono<User> userMono, ItemInformation.Type type) {
-        return userMono
-            .flatMap(u -> userRepo.findById(u.getUserId()))
+    public Flux<ItemInformation> getItemListByType(Mono<String> userId, ItemInformation.Type type) {
+        return userId
+            .flatMap(userRepo::findById)
             .switchIfEmpty(Mono.empty())
             .map(User::getInventory)
             .flatMapMany(Flux::fromIterable)
@@ -41,9 +41,9 @@ public class InventoryManagerImpl implements InventoryManager {
     }
 
     @Override
-    public Mono<String> getItem(Mono<User> userMono, ItemInformation item) {
-        return userMono
-            .flatMap(user -> userRepo.findById(user.getUserId()))
+    public Mono<String> getItem(Mono<String> userId, ItemInformation item) {
+        return Mono.just(userId)
+            .flatMap(userRepo::findById)
             .switchIfEmpty(Mono.empty())
             .flatMap(user -> {
                 List<ItemInformation> result = user.getInventory();
@@ -54,7 +54,7 @@ public class InventoryManagerImpl implements InventoryManager {
     }
 
     @Override
-    public Flux<ItemInformation> checkEventItemsOwn(Mono<User> userMono) {
+    public Flux<ItemInformation> checkEventItemsOwn(Mono<String> userId) {
         WebClient webClient = WebClient.create();
         Flux<ItemInformation> eventItems = webClient
                 .get()
@@ -62,16 +62,17 @@ public class InventoryManagerImpl implements InventoryManager {
                 .retrieve()
                 .bodyToFlux(ItemInformation.class);
 
-        return userMono.flatMap(user -> userRepo.findById(user.getUserId()))
+        return userId
+                 .flatMap(userRepo::findById)
                  .switchIfEmpty(Mono.empty())
                  .flatMapIterable(User::getInventory)
                  .flatMap(itemInformation -> eventItems.filter(itemInformation1 -> itemInformation.getName().equals(itemInformation1.getName())));
     }
 
     @Override
-    public Mono<Map<ItemInformation.Type, Long>> getItemCountByType(Mono<User> userMono) {
-        return userMono
-                .flatMap(user -> userRepo.findById(user.getUserId()))
+    public Mono<Map<ItemInformation.Type, Long>> getItemCountByType(Mono<String> userId) {
+        return userId
+                .flatMap(userRepo::findById)
                 .switchIfEmpty(Mono.empty())
                 .flatMap(user -> Flux.fromIterable(user.getInventory())
                         .groupBy(ItemInformation::getType)

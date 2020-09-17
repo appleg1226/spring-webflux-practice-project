@@ -40,7 +40,7 @@ class InventoryManagerImplTest {
 
         userRepository.insert(testUser).block();
 
-        Flux<ItemInformation> fluxResult = inventoryManager.getItemList(Mono.just(testUser));
+        Flux<ItemInformation> fluxResult = inventoryManager.getItemList(Mono.just("1"));
         fluxResult.subscribe(itemInformation -> log.info(itemInformation.toString()));
 
         StepVerifier.create(fluxResult)
@@ -70,7 +70,7 @@ class InventoryManagerImplTest {
 
         userRepository.insert(testUser).block();
 
-        Flux<ItemInformation> fluxResult = inventoryManager.getItemListByType(Mono.just(testUser), ItemInformation.Type.EQUIP);
+        Flux<ItemInformation> fluxResult = inventoryManager.getItemListByType(Mono.just("1"), ItemInformation.Type.EQUIP);
         fluxResult.subscribe(itemInformation -> log.info(itemInformation.toString()));
 
         StepVerifier.create(fluxResult)
@@ -101,7 +101,7 @@ class InventoryManagerImplTest {
 
         ItemInformation i3 = ItemInformation.builder().id("3").name("hp_portion").type(ItemInformation.Type.CONSUME).build();
 
-        Mono<String> stringMono = inventoryManager.getItem(Mono.just(testUser), i3);
+        Mono<String> stringMono = inventoryManager.getItem(Mono.just(testUser.getUserId()), i3);
         StepVerifier.create(stringMono)
                 .consumeNextWith(log::info).verifyComplete();
     }
@@ -124,7 +124,7 @@ class InventoryManagerImplTest {
 
         userRepository.insert(testUser).block();
 
-        Mono<Map<ItemInformation.Type, Long>> result = inventoryManager.getItemCountByType(Mono.just(testUser));
+        Mono<Map<ItemInformation.Type, Long>> result = inventoryManager.getItemCountByType(Mono.just(testUser.getUserId()));
 
         StepVerifier.create(result)
                 .consumeNextWith(typeLongMap -> {
