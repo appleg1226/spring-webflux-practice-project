@@ -26,7 +26,7 @@ public class UserHandler {
     @Data
     static class UserAndItem{
         private String userId;
-        private ItemInformation item;
+        private String itemId;
     }
 
     public Mono<ServerResponse> getItemList(ServerRequest request){
@@ -43,7 +43,7 @@ public class UserHandler {
 
     public Mono<ServerResponse> getItem(ServerRequest request){
         Mono<UserAndItem> result = request.bodyToMono(UserAndItem.class);
-        return result.flatMap(userAndItem -> ServerResponse.ok().body(inventoryManager.getItem(Mono.just(userAndItem.getUserId()), userAndItem.getItem()), String.class));
+        return result.flatMap(userAndItem -> ServerResponse.ok().body(inventoryManager.getItem(Mono.just(userAndItem.getUserId()), userAndItem.getItemId()), String.class));
     }
 
     public Mono<ServerResponse> getItemCount(ServerRequest request){

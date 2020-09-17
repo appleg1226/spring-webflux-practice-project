@@ -3,6 +3,7 @@ package com.chong.webfluxpractice.service;
 import com.chong.webfluxpractice.domain.ItemInformation;
 import com.chong.webfluxpractice.domain.Shop;
 import com.chong.webfluxpractice.domain.User;
+import com.chong.webfluxpractice.repository.ItemInformationRepository;
 import com.chong.webfluxpractice.repository.ShopRepository;
 import com.chong.webfluxpractice.repository.UserRepository;
 import lombok.extern.java.Log;
@@ -29,6 +30,8 @@ class ShopManagerImplTest {
     ShopRepository shopRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ItemInformationRepository itemRepository;
 
     @Test
     void getItemListforSellTest() {
@@ -40,7 +43,7 @@ class ShopManagerImplTest {
         Shop testShop = Shop.builder().id("1").itemList(inventory).build();
         shopRepository.insert(testShop).block();
 
-        Flux<ItemInformation> fluxResult = shopManager.getItemListforSell(Mono.just(testShop));
+        Flux<ItemInformation> fluxResult = shopManager.getItemListforSell(Mono.just(testShop.getId()));
         fluxResult.subscribe(itemInformation -> log.info(itemInformation.toString()));
 
         StepVerifier.create(fluxResult)
@@ -72,8 +75,9 @@ class ShopManagerImplTest {
 
         shopRepository.insert(testShop).block();
         userRepository.insert(testUser).block();
+        itemRepository.insert(Arrays.asList(i1, i2, i3, i4, i5)).blockLast();
 
-        shopManager.buyItemfromUser(Mono.just(testShop), testUser, i3).block();
+        shopManager.buyItemfromUser(testShop.getId(), testUser.getUserId(), i3.getId()).block();
 
         userRepository.findById(testUser.getUserId()).subscribe(user -> {
             log.info(user.getInventory().toString());
@@ -102,8 +106,9 @@ class ShopManagerImplTest {
 
         shopRepository.insert(testShop).block();
         userRepository.insert(testUser).block();
+        itemRepository.insert(Arrays.asList(i1, i2, i3, i4, i5)).blockLast();
 
-        shopManager.sellItemtoUser(Mono.just(testShop), testUser, i4).block();
+        shopManager.sellItemtoUser(testShop.getId(), testUser.getUserId(), i4.getId()).block();
 
         userRepository.findById(testUser.getUserId()).subscribe(user -> {
             log.info(user.getInventory().toString());

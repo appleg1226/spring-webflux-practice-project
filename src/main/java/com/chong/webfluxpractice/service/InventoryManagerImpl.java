@@ -2,6 +2,7 @@ package com.chong.webfluxpractice.service;
 
 import com.chong.webfluxpractice.domain.ItemInformation;
 import com.chong.webfluxpractice.domain.User;
+import com.chong.webfluxpractice.repository.ItemInformationRepository;
 import com.chong.webfluxpractice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class InventoryManagerImpl implements InventoryManager {
 
     private final UserRepository userRepo;
+    private final ItemInformationRepository itemRepository;
 
     @Override
     public Flux<ItemInformation> getItemList(Mono<String> userId) {
@@ -41,16 +43,17 @@ public class InventoryManagerImpl implements InventoryManager {
     }
 
     @Override
-    public Mono<String> getItem(Mono<String> userId, ItemInformation item) {
-        return Mono.just(userId)
-            .flatMap(userRepo::findById)
-            .switchIfEmpty(Mono.empty())
-            .flatMap(user -> {
-                List<ItemInformation> result = user.getInventory();
-                result.add(item);
-                user.setInventory(result);
-                return userRepo.save(user);
-            }).map(user -> user.getUserId() + " - received item: " + item.getName());
+    public Mono<String> getItem(Mono<String> userId, String itemId) {
+        return Mono.just(itemId)
+                .flatMap(itemRepository::findById)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "not exist")))
+                .flatMap(item -> userRepo.findById(userId)
+                                .flatMap(user -> {
+                                    List<ItemInformation> result = user.getInventory();
+                                    result.add(item);
+                                    user.setInventory(result);
+                                    return userRepo.save(user);
+                                }).map(user -> user.getUserId() + " - received item: " + item.getName()));
     }
 
     @Override

@@ -101,7 +101,7 @@ class InventoryManagerImplTest {
 
         ItemInformation i3 = ItemInformation.builder().id("3").name("hp_portion").type(ItemInformation.Type.CONSUME).build();
 
-        Mono<String> stringMono = inventoryManager.getItem(Mono.just(testUser.getUserId()), i3);
+        Mono<String> stringMono = inventoryManager.getItem(Mono.just(testUser.getUserId()), i3.getId());
         StepVerifier.create(stringMono)
                 .consumeNextWith(log::info).verifyComplete();
     }
