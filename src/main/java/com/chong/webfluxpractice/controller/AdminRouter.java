@@ -16,6 +16,6 @@ public class AdminRouter {
     public RouterFunction<ServerResponse> routeByAdmin(AdminHandler adminHandler){
         return nest(path("/admin"),
                 route(POST("/give/all"), adminHandler::provideAll)
-                .andRoute(POST("/give/server"), adminHandler::providetoServer));
+                .andRoute(POST("/give/server"), adminHandler::provideToServer));
     }
 }

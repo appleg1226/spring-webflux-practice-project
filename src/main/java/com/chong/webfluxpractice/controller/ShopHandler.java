@@ -23,8 +23,8 @@ public class ShopHandler {
     }
 
     public Mono<ServerResponse> getItemList(ServerRequest request){
-        Mono<String> shopId = request.bodyToMono(String.class);
-        return ServerResponse.ok().body(shopManager.getItemListforSell(shopId), ItemInformation.class);
+        String shopId = request.pathVariable("id");
+        return ServerResponse.ok().body(shopManager.getItemListforSell(Mono.just(shopId)), ItemInformation.class);
     }
 
     public Mono<ServerResponse> sellItem(ServerRequest request){
@@ -32,13 +32,13 @@ public class ShopHandler {
 
         return result.flatMap(shopAndUserAndItem -> ServerResponse
                 .ok()
-                .body(shopManager.buyItemfromUser(shopAndUserAndItem.getShopId(), shopAndUserAndItem.getUserId(), shopAndUserAndItem.getItemId()), String.class));
+                .body(shopManager.sellItemtoUser(shopAndUserAndItem.getShopId(), shopAndUserAndItem.getUserId(), shopAndUserAndItem.getItemId()), String.class));
     }
 
     public Mono<ServerResponse> purchaseItem(ServerRequest request){
         Mono<ShopAndUserAndItem> result = request.bodyToMono(ShopAndUserAndItem.class);
         return result.flatMap(shopAndUserAndItem -> ServerResponse
                 .ok()
-                .body(shopManager.sellItemtoUser(shopAndUserAndItem.getShopId(), shopAndUserAndItem.getUserId(), shopAndUserAndItem.getItemId()), String.class));
+                .body(shopManager.buyItemfromUser(shopAndUserAndItem.getShopId(), shopAndUserAndItem.getUserId(), shopAndUserAndItem.getItemId()), String.class));
     }
 }

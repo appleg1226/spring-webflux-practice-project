@@ -28,7 +28,7 @@ public class AdminHandler {
                 .body(adminManager.provideItemtoAll(item), String.class));
     }
 
-    public Mono<ServerResponse> providetoServer(ServerRequest request){
+    public Mono<ServerResponse> provideToServer(ServerRequest request){
         return request.bodyToMono(ServerAndItem.class)
                 .flatMap(serverAndItem -> ServerResponse
                         .ok()

@@ -43,7 +43,6 @@ public class ShopManagerImpl implements ShopManager {
                                     List<ItemInformation> userItemList = user.getInventory();
                                     userItemList.remove(item);
                                     user.setInventory(userItemList);
-                                    log.info(user.toString());
                                     return userRepository.save(user);
                                 })
                                 .flatMap(user -> shopRepository.findById(shopId))
@@ -51,9 +50,8 @@ public class ShopManagerImpl implements ShopManager {
                                     List<ItemInformation> shopItemList = shop.getItemList();
                                     shopItemList.add(item);
                                     shop.setItemList(shopItemList);
-                                    log.info(shop.toString());
                                     return shopRepository.save(shop);
-                        })).map(shop -> userId + " sold item - " + itemId);
+                        })).map(shop -> "user:" + userId + " sold item:" + itemId + " to shop:" + shopId);
     }
 
     @Override
@@ -66,7 +64,6 @@ public class ShopManagerImpl implements ShopManager {
                             List<ItemInformation> userItemList = user.getInventory();
                             userItemList.add(item);
                             user.setInventory(userItemList);
-                            log.info(user.toString());
                             return userRepository.save(user);
                         })
                         .flatMap(user -> shopRepository.findById(shopId))
@@ -74,9 +71,8 @@ public class ShopManagerImpl implements ShopManager {
                             List<ItemInformation> shopItemList = shop.getItemList();
                             shopItemList.remove(item);
                             shop.setItemList(shopItemList);
-                            log.info(shop.toString());
                             return shopRepository.save(shop);
-                        })).map(shop -> userId + " purchased item - " + itemId);
+                        })).map(shop -> "user:" + userId + " purchased item:" + itemId + " from shop:" + shopId);
 
     }
 }

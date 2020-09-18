@@ -74,6 +74,7 @@ public class InventoryManagerImpl implements InventoryManager {
 
     @Override
     public Mono<Map<ItemInformation.Type, Long>> getItemCountByType(Mono<String> userId) {
+        System.out.println("called function");
         return userId
                 .flatMap(userRepo::findById)
                 .switchIfEmpty(Mono.empty())

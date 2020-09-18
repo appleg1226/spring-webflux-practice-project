@@ -15,9 +15,9 @@ public class UserRouter {
     @Bean
     public RouterFunction<ServerResponse> routeByUser(UserHandler userHandler){
         return nest(path("/user"),
-                route(GET("/items"), userHandler::getItemList)
-                .andRoute(GET("/items-type"), userHandler::getItemListByType))
-                .andRoute(GET("/count"), userHandler::getItemCount)
-                .andRoute(POST("/get"), userHandler::getItem);
+                route(GET("/items/{id}"), userHandler::getItemList)
+                .andRoute(GET("/items/{type}/{id}"), userHandler::getItemListByType)
+                .andRoute(GET("/count/{id}"), userHandler::getItemCount)
+                .andRoute(POST("/get"), userHandler::getItem));
     }
 }

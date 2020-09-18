@@ -15,9 +15,9 @@ public class ShopRouter {
     @Bean
     public RouterFunction<ServerResponse> routeByShop(ShopHandler shopHandler){
         return nest(path("shop"),
-                route(GET("/items"), shopHandler::getItemList)
-                .andRoute(POST("/sell"), shopHandler::sellItem))
-                .andRoute(POST("/purchase"), shopHandler::purchaseItem);
+                route(GET("/items/{id}"), shopHandler::getItemList)
+                .andRoute(POST("/sell"), shopHandler::sellItem)
+                .andRoute(POST("/purchase"), shopHandler::purchaseItem));
     }
 
 }
