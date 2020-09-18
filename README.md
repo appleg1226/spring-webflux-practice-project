@@ -5,19 +5,13 @@
 
 - Spring Reactive Web
 
-- Spring Reactivce Data
-
-- Spring Security
-
-- Reactor Kafka
+- Spring Reactivce Data(MongoDB)
 <br/>
 
 ```
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 	compileOnly 'org.projectlombok:lombok'
@@ -37,10 +31,6 @@ dependencies {
 - 리액티브 데이터베이스 붙이고, 관련 기능 및 테스트 코드 작성
 
 - Spring Webclient를 이용하여 외부 api 호출하는 코드 작성
-
-- Spring Security 적용
-
-- Reactor Kafka Message Sender & Receiver 코드 작성
 <br/>
 
 ## 세부 구현 가상 Scenario
@@ -57,7 +47,6 @@ dependencies {
 
 - Controller는 Functional한 방식으로 구현(기존 MVC 방식말고)
 
-- Kafka 메시지 보내고 받는 클래스 작성. 이벤트 서버로 유저 정보 보내기.
 <br/>
 
 ## 클래스 설명
@@ -67,7 +56,12 @@ domain package
 - class ItemInformation: 유저와 상점이 소유한 아이템 정보 클래스 
 - class Shop: 상점 정보를 저장하는 클래스
 
-controller package:
+controller package: 
+Handler는 기존 MVC에서의 컨트롤러 내부 구조를 담당
+Router는 기존 MVC에서의 Mapping 부분을 담당
+- UserHandler, UserRouter
+- ShopHandler, ShopRouter
+- AdminHandler, AdminRouter
 
 repository package: ReactiveMongoRepository를 모두 구현.
 - UserRepository
@@ -78,8 +72,4 @@ service package
 - InventoryManager: 인벤토리 조회/저장 등의 기능 담당
 - ShopManager: 물건 조회/판매/구매 등의 기능 담당
 - AdminManager: 운영자의 관점으로 유저들에게 아이템 배포 기능 담당
-
-security package:
-
-kafka package:
 ```
